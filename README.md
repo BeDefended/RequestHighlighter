@@ -1,11 +1,11 @@
 # Request Highlighter (v0.1)
 
-Request Highlighter is a simple extension for Burp Suite tool (both community and professional editions) that provides an automatic way to highlight HTTP requests based on headers content (eg. Host, User-Agent, Cookies, Auth token, custom headers etc.).
-With Request Highlighter testers can easily identify and visualize, within the Proxy history tab, requests belonging to different sessions, hosts, browsers or devices.
+Request Highlighter is a simple extension for Burp Suite tool (for both community and professional editions) that provides an automatic way to highlight HTTP requests based on headers content (eg. Host, User-Agent, Cookies, Auth token, custom headers etc.).
+With Request Highlighter testers can easily identify and point out, within the Proxy history tab, requests belonging to different sessions, hosts, browsers or devices.
 
 # Installation
 
-For Manual installation, download the project from this repository and compile it. Then in Burp Suite, select the Extender tab, click the Add button, and select the .jar file produced.
+Manual installation: download the project from this repository and compile it. Then in Burp Suite, select the Extender tab, click the Add button, and select the .jar file.
 
 # Usage
 
