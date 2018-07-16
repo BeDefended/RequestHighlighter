@@ -1,11 +1,22 @@
-# Request Highlighter (v0.1)
+# Request Highlighter
 
 Request Highlighter is a simple extension for Burp Suite tool (for both community and professional editions) that provides an automatic way to highlight HTTP requests based on headers content (eg. Host, User-Agent, Cookies, Auth token, custom headers etc.).
 With Request Highlighter testers can easily identify and point out, within the Proxy history tab, requests belonging to different sessions, hosts, browsers or devices.
 
+# Changelog
+
+**0.2 20180716**
+ - Add color selection
+ - Add proxy history highlighting
+ - Migration to gradle
+
+**0.1 20180629**
+ - First public release
+
 # Installation
 
-Manual installation: download the project from this repository and compile it. Then in Burp Suite, select the Extender tab, click the Add button, and select the .jar file.
+Manual installation: download the project from this repository and build it with gradle. 
+Then in Burp Suite, select the Extender tab, click the Add button, and select the .jar file generated.
 
 # Usage
 
@@ -15,9 +26,9 @@ Manual installation: download the project from this repository and compile it. T
 
     * NOTE: Currently **ONLY** headers (or parts of them) can be selected
 
-3. On the context menu click on "Request Highlighter - add highlight"
+3. On the context menu click on "Request Highlighter - add highlight" and select the color from the list of available ones
 
-4. Starting from now, every request that contains the string selected will be automatically highlighted with the same color
+4. Every request (also inside the proxy history) that contains the string selected will be automatically highlighted with the selected color
 
     * NOTE: **BE AWARE of potential conflicts!** If a request matches with multiple strings, it will be highlighted with the color of the last string found in the request.
 
