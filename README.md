@@ -8,7 +8,7 @@ With Request Highlighter testers can easily identify and point out, within the P
 **0.2 20180716**
  - Add color selection
  - Add proxy history highlighting
- - Migration to gradle
+ - Introduce gradle
 
 **0.1 20180629**
  - First public release
