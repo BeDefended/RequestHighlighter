@@ -41,7 +41,7 @@ public class BurpExtender implements IBurpExtender, IProxyListener, IContextMenu
 	private PrintWriter stdout;
 	
 	private static final String PLUGIN_NAME = "Request Highlighter";
-	private static final int CHARS_NUMBER = 10;
+	private static final int CHARS_NUMBER = 16;
 	private static final int MIN_LEN = 3;
 	
 	private HashSet<String> colors;	
@@ -103,6 +103,31 @@ public class BurpExtender implements IBurpExtender, IProxyListener, IContextMenu
 				req.setHighlight(tags.get(entry.getKey()));
 				
 				break;
+			}
+			
+		}
+	}
+	
+	private void removeHighlight(IHttpRequestResponse req, String selectedText)
+	{
+
+		IRequestInfo request = helpers.analyzeRequest(req.getRequest());
+		
+		String headers = request.getHeaders().toString();
+		
+		for (Map.Entry<String, String> entry : tags.entrySet())
+		{
+			if(headers.contains(entry.getKey()))
+			{					
+				
+				if(entry.getKey().equals(selectedText))
+					req.setHighlight(null);
+				else
+				{
+					req.setHighlight(tags.get(entry.getKey()));
+					break;
+				}
+				
 			}
 			
 		}
@@ -187,6 +212,42 @@ public class BurpExtender implements IBurpExtender, IProxyListener, IContextMenu
 			
 			
 		}
+		else if(invocation.getInvocationContext() == IContextMenuInvocation.CONTEXT_PROXY_HISTORY)
+		{
+						
+			if(invocation.getSelectedMessages().length == 1)
+			{
+				
+				IHttpRequestResponse req = invocation.getSelectedMessages()[0];
+				
+				IRequestInfo request = helpers.analyzeRequest(req.getRequest());
+				
+				String headers = request.getHeaders().toString();
+				
+				List<JMenuItem> menu = new ArrayList<JMenuItem>();
+				
+				JMenu main = new JMenu(PLUGIN_NAME + " - Disable highlights in this request");
+								
+				int count = 0;
+				
+				for (Map.Entry<String, String> entry : tags.entrySet())
+				{
+					if(headers.contains(entry.getKey()))
+					{
+												
+						main.add(CreateMenuItem(entry.getValue()+" - "+this.generateLabel(entry.getKey()), entry.getKey(), this));
+						count++;
+					}
+				}
+				
+				if(count > 0)
+				{
+					menu.add(main);
+					
+					return menu;
+				}
+			}
+		}
 				
 		
 		return null;
@@ -203,6 +264,23 @@ public class BurpExtender implements IBurpExtender, IProxyListener, IContextMenu
         return new String(selection);
     }
     
+    private String generateLabel(String entry)
+    {
+    	
+		String text;
+		
+		if(entry.length() > (CHARS_NUMBER*2)+5)
+		{
+			//The selected string is too long to be displayed
+			text = entry.substring(0, CHARS_NUMBER)+" ... "+entry.substring(entry.length() - CHARS_NUMBER);
+		}
+		else
+		{
+			text = entry;
+		}
+			
+		return text;
+    }
     
     private JMenu generateSubmenu()
     {
@@ -210,19 +288,8 @@ public class BurpExtender implements IBurpExtender, IProxyListener, IContextMenu
 				
 		for (Map.Entry<String, String> entry : tags.entrySet())
 		{
-			String text;
-			
-			if(entry.getKey().length() > (CHARS_NUMBER*2)+5)
-			{
-				//The selected string is too long to be displayed
-				text = entry.getKey().substring(0, CHARS_NUMBER)+" ... "+entry.getKey().substring(entry.getKey().length() - CHARS_NUMBER);
-			}
-			else
-			{
-				text = entry.getKey();
-			}
-			
-			main.add(CreateMenuItem(entry.getValue()+" - "+text, entry.getKey(), this));
+						
+			main.add(CreateMenuItem(entry.getValue()+" - "+this.generateLabel(entry.getKey()), entry.getKey(), this));
 		}
 		
 		return main;
@@ -261,6 +328,13 @@ public class BurpExtender implements IBurpExtender, IProxyListener, IContextMenu
 				if(color != null)
 				{
 					//Already highlighted --> remove
+										
+					//Remove highlight for all requests in proxy history
+					for (IHttpRequestResponse elem: history)
+					{
+						
+						removeHighlight(elem, selectedText);
+					}
 					
 					tags.remove(selectedText);
 					
@@ -312,6 +386,8 @@ public class BurpExtender implements IBurpExtender, IProxyListener, IContextMenu
 				if (evt.getPropertyName().equals("state")) {
 					if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
 						dialog.dispose();
+						
+						win.repaint();
 					}
 				}
 			}
